@@ -36,7 +36,7 @@ function _evalcache () {
     # Calculate the time difference and cleanup if needed
     local now=$(date +%s)
     local file_modification=$(stat --format="%Y" "$cacheFile")
-    local diff=(( (now - file_modification) / ZSH_CLEANUP_SECONDS ))
+    (( diff = (now - file_modification) / ZSH_CLEANUP_SECONDS ))
     if [ $diff -gt 1 ]; then
       echo "evalcache: cache for $* expired, rebuilding it"
       rm -f "$cacheFile"
