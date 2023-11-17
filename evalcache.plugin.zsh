@@ -9,6 +9,7 @@ export ZSH_EVALCACHE_DIR=${ZSH_EVALCACHE_DIR:-"$HOME/.zsh-evalcache"}
 export ZSH_CLEANUP_SECONDS=${ZSH_CLEANUP_SECONDS:-"604800"}
 
 function _evalcache () {
+  set -x
   local cmdHash="nohash" data="$*" name
 
   # use the first non-variable argument as the name
@@ -34,7 +35,7 @@ function _evalcache () {
   if [ -s "$cacheFile" ]; then
     # Calculate the time difference and cleanup if needed
     local now=$(date +%s)
-    local file_modification=$(stat -f "%m" "$cacheFile")
+    local file_modification=$(stat --format="%Y" "$cacheFile")
     let diff=($now - $file_modification) / "$ZSH_CLEANUP_SECONDS"
     if [[ $diff -gt 1 ]]; then
       echo "evalcache: cache for $* expired, rebuilding it"
@@ -56,6 +57,7 @@ function _evalcache () {
       echo "evalcache: ERROR: ${name} is not installed or in PATH" >&2
     fi
   fi
+  set +x
 }
 
 function _evalcache_clear () {
