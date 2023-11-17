@@ -32,8 +32,8 @@ function _evalcache () {
   local cacheFile="$ZSH_EVALCACHE_DIR/init-${name##*/}-${cmdHash}.sh"
 
   # Calculate the time difference and cleanup if needed
-  now=$(date +%s)
-  file_modification=$(stat --format="%Y" "$cacheFile")
+  local now=$(date +%s)
+  local file_modification=$(stat -f "%m" "$cacheFile")
   let diff=($now - $file_modification) / "$ZSH_CLEANUP_SECONDS"
   if [[ $diff -gt 1 ]]; then
     rm -f "$cacheFile"
