@@ -5,6 +5,8 @@
 
 # default cache directory
 export ZSH_EVALCACHE_DIR=${ZSH_EVALCACHE_DIR:-"$HOME/.zsh-evalcache"}
+# cleanup every week
+export ZSH_CLEANUP_SECONDS=${ZSH_CLEANUP_SECONDS:-604800}
 
 function _evalcache () {
   local cmdHash="nohash" data="$*" name
@@ -28,6 +30,14 @@ function _evalcache () {
   fi
 
   local cacheFile="$ZSH_EVALCACHE_DIR/init-${name##*/}-${cmdHash}.sh"
+
+  # Calculate the time difference and cleanup if needed
+  now=$(date +%s)
+  file_modification=$(stat --format="%Y" "$cacheFile")
+  let diff=($now - $file_modification) / "$ZSH_CLEANUP_SECONDS"
+  if [[ $diff -gt 1 ]]; then
+    rm -f "$cacheFile"
+  fi
 
   if [ "$ZSH_EVALCACHE_DISABLE" = "true" ]; then
     eval ${(q)@}
