@@ -31,12 +31,15 @@ function _evalcache () {
 
   local cacheFile="$ZSH_EVALCACHE_DIR/init-${name##*/}-${cmdHash}.sh"
 
-  # Calculate the time difference and cleanup if needed
-  local now=$(date +%s)
-  local file_modification=$(stat -f "%m" "$cacheFile")
-  let diff=($now - $file_modification) / "$ZSH_CLEANUP_SECONDS"
-  if [[ $diff -gt 1 ]]; then
-    rm -f "$cacheFile"
+  if [ -s "$cacheFile" ]; then
+    # Calculate the time difference and cleanup if needed
+    local now=$(date +%s)
+    local file_modification=$(stat --format="%Y" "$cacheFile")
+    let diff=($now - $file_modification) / "$ZSH_CLEANUP_SECONDS"
+    if [[ $diff -gt 1 ]]; then
+      echo "evalcache: cache for $* expired, rebuilding it"
+      rm -f "$cacheFile"
+    fi
   fi
 
   if [ "$ZSH_EVALCACHE_DISABLE" = "true" ]; then
