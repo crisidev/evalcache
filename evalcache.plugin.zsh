@@ -6,7 +6,7 @@
 # default cache directory
 export ZSH_EVALCACHE_DIR=${ZSH_EVALCACHE_DIR:-"$HOME/.zsh-evalcache"}
 # cleanup every week
-export ZSH_CLEANUP_SECONDS=${ZSH_CLEANUP_SECONDS:-604800}
+export ZSH_CLEANUP_SECONDS=${ZSH_CLEANUP_SECONDS:-"604800"}
 
 function _evalcache () {
   local cmdHash="nohash" data="$*" name
